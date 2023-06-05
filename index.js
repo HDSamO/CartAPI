@@ -9,7 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger.js';
 dotenv.config();
 const app = Express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 //use json data throughout the application
 app.use(bodyParser.json());
