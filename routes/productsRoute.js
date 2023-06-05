@@ -130,6 +130,13 @@ router.get('/', (req, res) => {
  *           type: string
  *           description: An optional description of the product.
  *           example: "A powerful smartphone with a stunning display."
+ *         image:
+ *           type: string(uri)
+ *           description: A required link to the image of the product
+ *           example: "https://en.wikipedia.org/wiki/Instant_noodles#/media/File:Mama_instant_noodle_block.jpg"
+ *         code:
+ *           type: string
+ *           description: Required code of the product
  *         discount:
  *           type: number
  *           description: An optional discount percentage for the product.
@@ -141,6 +148,8 @@ router.get('/', (req, res) => {
  *       required:
  *         - productName
  *         - unitPrice
+ *         - image
+ *         - code
  */
 
 /**

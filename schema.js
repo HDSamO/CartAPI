@@ -25,12 +25,15 @@ export const userSchema = Joi.object({
     phone: Joi.string().regex(/^[0-9]{10}$/).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
+    sessionNumber: Joi.string().optional(),
     currentCart: currentCartSchema.optional(),
 });
 
 export const productSchema = Joi.object({
     productName: Joi.string().required(),
     unitPrice: Joi.number().min(0).required(),
+    image: Joi.string().uri().required(),
+    code: Joi.string().required(),
     discount: Joi.number().min(0).max(100),
     description: Joi.string().optional(),
     storage: Joi.number(),

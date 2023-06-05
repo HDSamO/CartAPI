@@ -22,6 +22,8 @@ export async function addProduct(req, res) {
         productName: product.productName,
         unitPrice: product.unitPrice,
         description: product.description ?? "",
+        image: product.image,
+        code: product.code,
         discount: product.discount ?? 0,
         storage: product.storage ?? 0
     });

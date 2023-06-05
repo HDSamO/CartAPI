@@ -7,6 +7,10 @@ import jwt  from "jsonwebtoken";
 const usersRef = ref(database, '/users');
 const saltRounds = 10;
 
+export function generateSessionNumber() {
+  return Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+}
+
 export async function createUser(req, res) {
     const user = req.body;
     const { error, value } = userSchema.validate(user);
@@ -31,6 +35,7 @@ export async function createUser(req, res) {
         phone: user.phone,
         email: user.email,
         role: "user",
+        sessionNumber: generateSessionNumber(),
         password: hashedPassword
       });
 
@@ -107,5 +112,27 @@ export async function getAllUsers(req, res) {
   catch (error) {
     console.log(error);
     return res.status(500).send({message: "Internal server error"});
+  }
+}
+
+export async function getSessionNumber(req, res) {
+  const userID = req.user.sub;
+
+  const userQuery = query(usersRef, ...[orderByKey(), equalTo(userID.toString())]);
+
+  try {
+    const snapshot = await get(userQuery);
+    if (snapshot.exists()) {
+      const userInfo = snapshot.val()[userID];
+      const sessionNumber = userInfo.sessionNumber;
+      return res.status(200).json({sessionNumber});
+    }
+    else {
+      return res.status(404).send("User not found");
+    }
+  }
+  catch (error) {
+    console.error(error);
+    return res.send("Internal server error");
   }
 }

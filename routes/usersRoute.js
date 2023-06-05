@@ -1,5 +1,5 @@
 import Express from 'express';
-import { createUser, getUserByID, updateUser, getAllUsers } from '../controllers/usersController.js';
+import { createUser, getUserByID, updateUser, getAllUsers, getSessionNumber } from '../controllers/usersController.js';
 import { startShopping, getCurrentCart, updateCartProduct, endShopping } from '../controllers/cartControllers.js';
 import { getPersonalHistory, getHistoryById } from '../controllers/salesController.js';
 import jwt from "jsonwebtoken";
@@ -20,6 +20,8 @@ function verifyToken(req, res, next) {
         res.status(400).json({ message: 'Invalid token' });
     }
 }
+
+router.get("/sessionNumber", verifyToken, getSessionNumber); //admin required
 
 /**
  * @swagger
@@ -132,13 +134,26 @@ router.get("/", verifyToken, getAllUsers); //admin required
  * @swagger
  *
  * /users/cart/start:
- *   get:
+ *   post:
  *     summary: Start shopping
  *     tags:
  *       - Cart
- *     description: Creates a new cart or returns current cart if it exists. Requires user authentication.
+ *     description: Creates a new cart if the session number provided is correct. Requires user authentication.
  *     security:
  *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionNumber:
+ *                 type: string
+ *                 description: The session number of the user to start shopping.
+ *                 example: "123456"
+ *         
+ *             required:
+ *               - sessionNumber
  *     responses:
  *       '200':
  *         description: OK
@@ -156,7 +171,7 @@ router.get("/", verifyToken, getAllUsers); //admin required
  *       '500':
  *         $ref: '#/components/responses/InternalServerError' 
  */
-router.get("/cart/start", verifyToken, startShopping); 
+router.post("/cart/start", verifyToken, startShopping); 
 
 //see currentCart
 /**
@@ -195,7 +210,7 @@ router.get("/cart/start", verifyToken, startShopping);
  *         $ref: '#/components/responses/InternalServerError' 
  */
 /**
- * @swagger
+* @swagger
  * components:
  *   schemas:
  *     Item:
@@ -213,7 +228,32 @@ router.get("/cart/start", verifyToken, startShopping);
  *         productAmount:
  *           type: number
  *           description: The amount of the product (optional).
- *
+ *     User: 
+ *       type: object
+ *       required:
+ *         - firstName
+ *         - lastName
+ *         - phone
+ *         - email
+ *         - password
+ *       properties:
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         sessionNumber:
+ *           type: string
+ *         role:
+ *           type: string
+ *         currentCart:
+ *           type: string
+ *           description: current shopping cart of the user, no need to pay attention to
  *     Cart:
  *       type: object
  *       properties:
@@ -320,7 +360,7 @@ router.post("/cart/", verifyToken, updateCartProduct);
  *     summary: End shopping and generate invoice
  *     tags:
  *       - Cart
- *     description: Ends the current shopping session for the authenticated user, generates an invoice based on their current cart, and deletes the cart.
+ *     description: Ends the current shopping session for the authenticated user, generates a new session number, an invoice based on their current cart, and deletes the cart as well as the old session number.
  *     security:
  *       - BearerAuth: []
  *     responses:

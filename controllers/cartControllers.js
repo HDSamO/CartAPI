@@ -1,6 +1,6 @@
 import { database } from "../database/database.js"
 import { onValue, ref, set, get, orderByChild, push, equalTo, child, query, orderByKey, update, remove, startAt, off, limitToFirst } from "firebase/database";
-
+import { generateSessionNumber } from "./usersController.js";
 export async function productExits(productID) {
     const productRef = ref(database, "products/" +productID);
     try {
@@ -15,6 +15,7 @@ export async function productExits(productID) {
         return false;
     }
 }
+
 
 export async function getProductPrice(productID, productAmount) {
     const productRef = ref(database, "products/" +productID);
@@ -170,6 +171,7 @@ export async function endShopping(req, res) {
             const invoiceRef =  await push(salesRef, {...cartSnapshot.val(), userID });
             const invoiceID = invoiceRef.key;
             remove(currentCartRef);
+            await update(userRef, { sessionNumber: generateSessionNumber()});
             return res.status(201).json({message: "Successfully paid", invoiceID});
         }   
     }
