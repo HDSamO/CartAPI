@@ -18,7 +18,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 app.get('/', (req, res) => {
-    res.send("Hello from homepage");
+    res.send("Homepage");
 });
 
 
