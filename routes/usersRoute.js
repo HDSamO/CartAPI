@@ -171,14 +171,14 @@ router.get("/", verifyToken, getAllUsers); //admin required
  *       '500':
  *         $ref: '#/components/responses/InternalServerError' 
  */
-router.post("/cart/start", verifyToken, startShopping); 
+router.post("/cart/start", startShopping); 
 
 //see currentCart
 /**
  * @swagger
  *
- * /users/cart:
- *   get:
+ * /users/cart/get:
+ *   post:
  *     summary: Get current cart
  *     tags:
  *       - Cart
@@ -281,13 +281,13 @@ router.post("/cart/start", verifyToken, startShopping);
  *             $ref: '#/components/schemas/Item'
  *           description: A collection of products in the cart.
  */ 
-router.get("/cart", verifyToken , getCurrentCart);
+router.post("/cart/get", getCurrentCart);
 
 //update currentCart
 /**
  * @swagger
  *
- * /users/cart:
+ * /users/cart/update:
  *   post:
  *     summary: Update current cart
  *     tags:
@@ -349,7 +349,7 @@ router.get("/cart", verifyToken , getCurrentCart);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.post("/cart/", verifyToken, updateCartProduct);
+router.post("/cart/update", updateCartProduct);
 
 //end shopping
 /**
@@ -382,7 +382,7 @@ router.post("/cart/", verifyToken, updateCartProduct);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get("/cart/end", verifyToken, endShopping);
+router.post("/cart/end", endShopping);
 
 //see history
 

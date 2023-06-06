@@ -37,7 +37,26 @@ export async function getProductPrice(productID, productAmount) {
 }
 
 export async function startShopping(req, res) {
-    const userID = req.user.sub;
+    // const userID = req.user.sub;
+    let userID;
+    const info = req.body;
+    if (!info) {
+        return res.status(400).send({message: "Missing request body"});
+    }
+    const sessionNumber = info.sessionNumber;
+    const usersRef = ref(database, "users");
+    const usersQuery = query(usersRef, ...[orderByChild("sessionNumber"), equalTo(sessionNumber)]);
+    try {
+        const currentUser = await get(usersQuery);
+        if(!currentUser.exists()) {
+            return res.status(404).send({message: "Invalid session number"});
+        }
+        userID = Object.keys(currentUser.val())[0];
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Internal server error"});
+    }
     const userRef = ref(database, "users/" + userID);
     const currentCartRef = child(userRef, "currentCart");
     try {
@@ -61,7 +80,26 @@ export async function startShopping(req, res) {
 }
 
 export async function getCurrentCart(req, res) {
-    const userID = req.user.sub;
+    // const userID = req.user.sub;
+    let userID;
+    const info = req.body;
+    if (!info) {
+        return res.status(400).send({message: "Missing request body"});
+    }
+    const sessionNumber = info.sessionNumber;
+    const usersRef = ref(database, "users");
+    const usersQuery = query(usersRef, ...[orderByChild("sessionNumber"), equalTo(sessionNumber)]);
+    try {
+        const currentUser = await get(usersQuery);
+        if(!currentUser.exists()) {
+            return res.status(404).send({message: "Invalid session number"});
+        }
+        userID = Object.keys(currentUser.val())[0];
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Internal server error"});
+    }
     const userRef = ref(database, "users/" + userID);
     const currentCartRef = child(userRef, "currentCart");
 
@@ -81,9 +119,24 @@ export async function getCurrentCart(req, res) {
 
 export async function updateCartProduct(req, res) {
     const updateInfo = req.body;
-    const userID = req.user.sub;
+    // const userID = req.user.sub;
+    let userID;
     if (!updateInfo) {
         return res.status(400).json({error: "Missing request body"});
+    }
+    const sessionNumber = updateInfo.sessionNumber;
+    const usersRef = ref(database, "users");
+    const usersQuery = query(usersRef, ...[orderByChild("sessionNumber"), equalTo(sessionNumber)]);
+    try {
+        const currentUser = await get(usersQuery);
+        if(!currentUser.exists()) {
+            return res.status(404).send({message: "Invalid session number"});
+        }
+        userID = Object.keys(currentUser.val())[0];
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Internal server error"});
     }
     const productID = updateInfo.productID;
     if (await productExits(productID) ) {
@@ -156,7 +209,26 @@ export async function updateCartProduct(req, res) {
 }
 
 export async function endShopping(req, res) {
-    const userID = req.user.sub;
+    // const userID = req.user.sub;
+    let userID;
+    const info = req.body;
+    if (!info) {
+        return res.status(400).send({message: "Missing request body"});
+    }
+    const sessionNumber = info.sessionNumber;
+    const usersRef = ref(database, "users");
+    const usersQuery = query(usersRef, ...[orderByChild("sessionNumber"), equalTo(sessionNumber)]);
+    try {
+        const currentUser = await get(usersQuery);
+        if(!currentUser.exists()) {
+            return res.status(404).send({message: "Invalid session number"});
+        }
+        userID = Object.keys(currentUser.val())[0];
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Internal server error"});
+    }
     const userRef = ref(database, "users/" + userID);
     const currentCartRef = child(userRef, "currentCart");
     const salesRef = ref(database, "sales/")
